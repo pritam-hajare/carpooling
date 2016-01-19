@@ -1,0 +1,26 @@
+/* the container */
+.bannerscollection_kenburns { 	position:relative; line-height:20px; }
+.bannerscollection_kenburns img { position:relative; display: block; max-width:inherit; max-height:inherit; /*width:inherit; height:inherit;	*/ }
+.bannerscollection_kenburns_list { margin:0; padding:0; list-style:none; display:none; }
+.bannerscollection_kenburns .contentHolderVisibleWrapper { position:absolute; overflow:hidden; margin-top:0px; *margin-top:-20px; } 
+.bannerscollection_kenburns .contentHolder { position:absolute; }
+.bannerscollection_kenburns .contentHolderUnit { position:relative; float:left; display:block; overflow:hidden; }
+.mycanvas { /*border:1px solid #ff0000;*/ position:absolute; top:8px; right:10px; z-index:10; } 
+.myloader { background:url(skins/loader.gif); width:37px; height:37px; position:absolute; left:49%; top:49%; z-index:5; } 
+/***generous SKIN***/
+.bannerscollection_kenburns.generous .bannerControls { position:absolute; left:0; top:0; z-index:2;  width:100%;}  
+.bannerscollection_kenburns.generous .leftNav { position:absolute; left:0px; margin-top:-16px; width:60px; height:110px; background:url(../skins/generous/leftNavOFF.png) 0 0 no-repeat; cursor: pointer; }
+.bannerscollection_kenburns.generous .leftNav:hover { background:url(../skins/generous/leftNavON.png) 0 0 no-repeat; }
+.bannerscollection_kenburns.generous .rightNav { position:absolute; right:0px; margin-top:-16px; width:60px; height:110px; background:url(../skins/generous/rightNavOFF.png) 0 0 no-repeat; cursor: pointer; }
+.bannerscollection_kenburns.generous .rightNav:hover { background:url(../skins/generous/rightNavON.png) 0 0 no-repeat; }
+.bannerscollection_kenburns.generous .playOver { position:absolute; width:73px; height:73px; background:url(../skins/generous/play_overOFF.png) 0 0 no-repeat; display:none; z-index:4; cursor: pointer; }
+.bannerscollection_kenburns.generous .playOver:hover { background:url(../skins/generous/play_overON.png) 0 0 no-repeat; display:none; z-index:4; cursor: pointer; }
+/*********************************Text Styles***************************************************/
+.bannerscollection_kenburns_texts { position:absolute; z-index:2; display: none; width:100%; } 
+.bannerscollection_kenburns_text_line { position:absolute; }
+/***generousFullWidthTexts***/
+.textElement11_generousFullWidth { line-height: 31px; color:#fff; font-size: 70px; text-shadow: 0px 3px 5px rgba(0, 0, 0, 0.6); }
+.textElement21_generousFullWidth { line-height:86px; color:#fff; font-size: 70px; text-align: center; text-shadow: 0px 3px 5px rgba(0, 0, 0, 0.6); }
+.textElement31_generousFullWidth { color:#fff; font-size: 70px; text-shadow: 0px 3px 5px rgba(0, 0, 0, 0.6); }
+
+.hideElement { display:none; }
