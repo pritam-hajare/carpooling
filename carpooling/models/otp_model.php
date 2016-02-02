@@ -8,7 +8,6 @@ Class Otp_model extends CI_Model
 	function __construct()
 	{
 		parent::__construct();
-		
 	}
 	
 	function check($mobile)
@@ -67,8 +66,8 @@ Class Otp_model extends CI_Model
 			$this->load->helper('string');
 			//$this->load->library('email');
 			
-			 $new_password		= random_string('numeric', 6);
-			$travel['Otp_code ']	= $new_password;
+			$new_password		= random_string('numeric', 6);
+			$travel['Otp_code']	= $new_password;
 
 			$id=$this->save($travel);	
 			$this->mobile = $mobile;

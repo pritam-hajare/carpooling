@@ -89,7 +89,6 @@ Class Trip_model extends CI_Model
 	
     $this->db->join('tbl_users','tbl_users.user_id = tbl_trips.trip_user_id');
 	$this->db->where('tbl_trips.trip_id',$pid);
-
 	
 	return $this->db->get('tbl_trips')->row();
 
@@ -97,7 +96,7 @@ Class Trip_model extends CI_Model
 
 	die;
 */
-	}	
+	}
 	
 	
 	function get_tripdetail($id)
@@ -112,6 +111,7 @@ Class Trip_model extends CI_Model
 		
 	}
 	function get_vehicle($vid)
+	
 	{
 	$result	= $this->db->get_where('tbl_vehicle', array('vechicle_id'=>$vid));
 		return $result->row();	
@@ -399,7 +399,7 @@ Class Trip_model extends CI_Model
 		return $result;		
 	}
         
-        function delete_trip_by_edit($trip_id)
+    function delete_trip_by_edit($trip_id)
 	{
 		
 		$this->db->where('trip_id', $trip_id);
@@ -524,5 +524,32 @@ Class Trip_model extends CI_Model
 		$result = $result->result_array();
 		return $result;*/
   }
-		
+	
+	function get_trip_for_noti($trip_id)
+    {   
+    	$this->db->select('tbl_trips.source as src,
+                           tbl_trips.destination as dest,
+                           tbl_trips.trip_depature_time as time');
+        $this->db->select('DATE_FORMAT(tbl_trips.trip_casual_date, "%d/%m/%Y") AS date', FALSE);
+        $this->db->from('tbl_trips');
+        $this->db->where('tbl_trips.trip_id',$trip_id);
+        
+        $result = $this->db->get();
+        return $result->result_array();       
+    }	
+
+    function cancel_trip($trip_id){
+		$data=array('trip_status'=>0);
+        $this->db->where('trip_id',$trip_id);
+        if($this->db->update('tbl_trips', $data))
+        {
+        	$data=array('book_status'=>0);
+      		$this->db->where('trip_id',$trip_id);
+       		return $this->db->update('tbl_booked_passenger', $data);   
+        }	
+        else{
+        	return false;
+        }
+
+	}
 }

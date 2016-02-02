@@ -10,11 +10,13 @@ class Vechicle_model extends CI_Model
 	{
 		return $this->db->order_by('vechicle_type_id', 'DESC')->get('tbl_vechicle_types')->result();
 	}
+	
 	function getvechicle_list($id) 
 	{
 		$this->db->join('tbl_vechicle_types','tbl_vechicle_types.vechicle_type_id = tbl_vehicle.vechicle_type_id');
 		$this->db->join('tbl_category','tbl_category.category_id = tbl_vechicle_types.category_id');
-		$this->db->where('user_id',$id);	
+		$this->db->where('user_id',$id);
+		$this->db->where('tbl_vehicle.is_active',1);	
 		return $this->db->get('tbl_vehicle')->result();
 	} 
 	
