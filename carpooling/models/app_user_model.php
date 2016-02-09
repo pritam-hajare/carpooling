@@ -63,5 +63,20 @@ Class App_user_model extends CI_Model
 		}
 	}
 
+	function get_mob_det($user_id)
+	{
+		$this->db->select('user_mobile as mobile,mob_vf');
+		$this->db->from('tbl_users');
+		$this->db->where('user_id', $user_id);
+
+		$result = $this->db->get();
+		$result = $result->row_array();	
+		if (sizeof($result) > 0) {
+			return $result;
+		}
+		else{
+			return false;
+		}
+	}
 }
 ?>

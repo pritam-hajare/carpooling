@@ -73,7 +73,7 @@ class Apiride extends REST_Controller
 		if(!empty($param['user_id']))
 		{
 			$data=$this->trip_model->get_trips($param['user_id']);	
-			if($data!=false){
+			if(sizeof($data["trip_details"])>0){
 				$data['state']="A";
 				$this->response($data);	
 			}
@@ -204,6 +204,7 @@ class Apiride extends REST_Controller
 			$data['fzone'] = $fresult[1];
 			$data['tmm'] = $ttime[1];
 			$data['tzone'] = $tresult[1];
+			$save['trip_casual_date'] = $postData['date'];
 			$data['frequency_values'] = json_encode(explode(',', str_replace('~', '', $trip->trip_frequncy)));
 			$data['passenger_type_id'] = $trip->passenger_type;
 			$data['routesdata'] = $trip->route_full_data;
@@ -278,9 +279,8 @@ class Apiride extends REST_Controller
 			$save['trip_avilable_seat'] = $postData['seats'];
 			$save['trip_comments'] = $postData['comments'];
 			$save['trip_user_id'] = $this->user_id;
-			if ($postData['rpt_from_date'] != '') {
-				$save['trip_casual_date'] = date('Y/m/d', strtotime(str_replace("/", "-", $postData['rpt_from_date'])));
-			}
+			$save['trip_casual_date'] = $postData['date'];
+			$save['trip_rate_details'] = $postData['rate'];
 			$save['passenger_type'] = $postData['passenger_type'];
 			$save['contact_person_number'] = $postData['number'];
 	
@@ -340,9 +340,6 @@ class Apiride extends REST_Controller
 				$param['trip_avilable_seat'] = $postData['seats'];
 				$param['trip_comments'] = $postData['comments'];
 				$param['trip_user_id'] = $this->user_id;
-				if ($postData['rpt_from_date'] != '') {
-					$param['trip_casual_date'] = date('Y/m/d', strtotime(str_replace("/", "-", $postData['date'])));
-				}
 				$param['passenger_type'] = $postData['passenger_type'];
 				$param['contact_person_number'] = $postData['number'];
 				$return_trip_id = $this->Trip_model->save($param);

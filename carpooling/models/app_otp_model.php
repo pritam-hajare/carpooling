@@ -5,8 +5,8 @@ class App_otp_model extends CI_Model
 	function save_otp($user_id,$otp)
     {   
         $data=array('OTP'=>$otp);
-        $this->db->where('user_id',$param['user_id']);
-        $this->db->update('tbl_users', $data);    
+        $this->db->where('user_id',$user_id);
+        return $this->db->update('tbl_users', $data);    
     }
 }    
 ?>

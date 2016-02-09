@@ -30,7 +30,7 @@
 							
 							$message['pass_name']=$param['pass_name'];
 							$message['header']='SR';
-							$message['pass_u/96_id']=$param['pass_user_id'];
+							$message['pass_u_id']=$param['pass_user_id'];
 							$message['tp_id']=$param['trip_id'];
 							$message['seats']=$seats;
 
