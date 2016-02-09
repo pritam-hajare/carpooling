@@ -28,8 +28,8 @@ class Api_tracking extends REST_Controller
 	function get_pass_loc_post() {
 		$output=array();
 		$postData = json_decode(file_get_contents("php://input"), true);
-		$param['user_id'] = explode(',',$postData['user_id']);
-		$param['trip_id'] = $postData['trip_id'];
+		$param['user_id'] = explode(',',$postData['u_id']);
+		$param['trip_id'] = $postData['tp_id'];
 		
 		$output=$this->App_tracking_model->get_pass_loc($param);
 		if($output!=false){
@@ -42,6 +42,9 @@ class Api_tracking extends REST_Controller
 		
 	}
 
+	function notify_to_share_loc_post(){
+
+	}
 
 
 }
