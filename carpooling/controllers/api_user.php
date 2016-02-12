@@ -111,13 +111,13 @@ class Api_user extends REST_Controller
 		$param['user_mobile'] = $postData['mobno'];
 		$OTP= rand(100000, 999999);
 		
-		if(empty($param['user_mobile']))
+		/*if(empty($param['user_mobile']))
 		{
 			$param=$this->App_user_model->get_mob_det($param['user_id']);
-		}
+		}*/
 
 		if($this->App_otp_model->save_otp($param['user_id'],$OTP)){	
-			$this->App_sms_model->send_otp($param['mobile'],$OTP);
+			$this->App_sms_model->send_otp($param['user_mobile'],$OTP);
 			$this->response(array('state'=>'success'));
 		}
 		else{
@@ -134,7 +134,7 @@ class Api_user extends REST_Controller
 		{	
 			$data=$this->App_user_model->get_pref($param['user_id']);
 			if($data!=false){
-				$data["state"]='success';
+				$data['state']='success';
 				$this->response($data);
 			}
 			else{
