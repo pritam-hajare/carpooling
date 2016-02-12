@@ -14,7 +14,7 @@ class App_shared_rides_model extends CI_Model
 
 		$trip_ids=null;
 		for($i=0;$i<sizeof($result);$i++){
-			$trip_ids[$i]=$result[0]['trip_id'];
+			$trip_ids[$i]=$result[$i]['trip_id'];
 		}
 		
 		if (sizeof($result) > 0) {

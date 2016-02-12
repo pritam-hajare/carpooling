@@ -23,11 +23,11 @@ Class App_user_model extends CI_Model
 		$data['user_first_name'] =$param['user_first_name'];
 		$data['user_last_name'] =$param['user_last_name'];
 		
-		if($param['user_address']!='NA')
-		$data['user_street'] =$param['user_address'];
-		if($param['user_city']!='NA')
+		if($param['user_address']!=null)
+		$data['user_street'] =$param['user_street'];
+		if($param['user_city']!=null)
 		{$data['user_city'] =$param['user_city'];}
-		if($param['user_company_name']!='NA')
+		if($param['user_company_name']!=null)
 		{$data['user_company_name'] =$param['user_company_name'];}
 		
 		$data['user_gender'] =$param['user_gender'];

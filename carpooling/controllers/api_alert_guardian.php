@@ -14,8 +14,9 @@ class Api_alert_guardian extends REST_Controller
 		
 		$param['mob_no'] = $postData['mobno'];
 		$param['msg'] = $postData['msg'];
-		
-		$this->response($this->App_sms_model->alert_guardian($param['mob_no'], $param['msg']));	
+			
+		$this->App_sms_model->alert_guardian($param['mob_no'], $param['msg']);
+		$this->response(array('sate'=>'success'));	
 	}	
 }
 ?>

@@ -8,7 +8,7 @@ class Api_notification extends REST_Controller
         $this->load->model('App_notification_model');
     }
 
-	function notify_pass_share_cur_loc_post() {
+	function notify_single_pass_share_cur_loc_post() {
 		
 		$postData = json_decode(file_get_contents("php://input"), true);
 		
@@ -16,8 +16,32 @@ class Api_notification extends REST_Controller
 		                 'header' => 'SL',
 		                 'dr_user_id' => $postData['dr_u_id'],
 		                 'trip_id' => $postData['tp_id'] );	
+		
+		if($this->App_notification_model->send_notification($postData['pass_u_id'], $message))
+		{
+			$this->response(array('state'=>'success'));	
+		}
+		else{
+			$this->response(array('state'=>'fail'));		
+		}
+	}	
 
-		$this->response($this->App_notification_model->send_notification($postData['pass_user_id'], $message));	
+	function notify_all_pass_share_cur_loc_post() {
+		
+		$postData = json_decode(file_get_contents("php://input"), true);
+		
+		$message = array('dr_name' => $postData['dr_name'],
+		                 'header' => 'SL',
+		                 'dr_user_id' => $postData['dr_u_id'],
+		                 'trip_id' => $postData['tp_id'] );	
+		
+		if($this->App_notification_model->send_notification($postData['pass_u_id'], $message))
+		{
+			$this->response(array('state'=>'success'));	
+		}
+		else{
+			$this->response(array('state'=>'fail'));		
+		}
 	}	
 }
 ?>

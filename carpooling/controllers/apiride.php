@@ -117,17 +117,15 @@ class Apiride extends REST_Controller
 			    }
 
 			    //Adding driver user id in notification
-			    $message['src']=$param['user_id'];
-
-			    $message['src']=$trip_det['src'];
-			    $message['dest']=$trip_det['dest'];
-			    $message['time']=$trip_det['time'];
-			    $message['date']=$trip_det['date'];
+			    $message['u_id']=$param['user_id'];
+			    $message['src']=$trip_det[0]['src'];
+			    $message['dest']=$trip_det[0]['dest'];
+			    $message['time']=$trip_det[0]['time'];
+			    $message['date']=$trip_det[0]['date'];
 			    $message['dr_name']=$param['dr_name'];
 			    $message['header']='CR';
 
        			$this->App_notification_model->send_notification($param['user_id'],$message);
-
 				$this->response(array('state'=>'success'));
 			}
 			else{
