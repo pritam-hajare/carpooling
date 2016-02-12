@@ -153,7 +153,7 @@ class Apivehicle extends REST_Controller
             $this->response(array('state'=>'NA'));
         }
 
-    }   
+    }    
 
   /*function addmyvehiclewithimg_post(){
    	$postData = json_decode(file_get_contents("php://input"), true);

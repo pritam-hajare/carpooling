@@ -33,21 +33,22 @@ class Api_login extends REST_Controller
 				$output['fname']=$result['user_first_name'];
 				$output['mobile']=$result['user_mobile'];
 				$output['mob_vf']=$result['mob_vf'];
+
+				//Send otp to mobile no if mobile noavailable and not verified
+				if(!empty($output['mobile']) && $output['regFbState']!='disable'){
+					if($output['mob_vf']==0){
+						$OTP=rand(100000, 999999);
+						$this->App_otp_model->save_otp($output['u_id'],$OTP);
+						$this->App_sms_model->send_otp($output['mobile'],$OTP);	
+					}
+				}
+
 			}
 			else if($result['regFbState']=='disable'){
 				$output['regFbState']=$result['regFbState'];
 			}
 
 			$this->response($output);
-
-			//Send otp to mobile no if mobile noavailable and not verified
-			if(!empty($output['user_mob']) && $result['regFbState']!='disable'){
-				if($output['mob_vf']==0){
-					$OTP=rand(100000, 999999);
-					$this->App_otp_model->save_otp($output['user_id'],$OTP);
-					$this->App_otp_model->send_otp($output['user_mob'],$OTP);	
-				}
-			}
 		} catch (OAuth2_Exception $e) {
 			$this->response(array('regFbState'=>'fail'));
 		}
