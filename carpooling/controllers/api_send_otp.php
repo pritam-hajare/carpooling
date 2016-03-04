@@ -18,9 +18,11 @@ class Api_send_otp extends REST_Controller
 		$param['user_mobile'] = $postData['u_mobile'];
 		
 		if(!empty($param['user_id']) && !empty($param['user_mobile']))
-		{	$this->response(array('state'=>'success'));
+		{	
 			$this->App_otp_model->save_otp($param['user_id'] ,$OTP);
 			$this->App_sms_model->send_otp($param['user_mobile'],$OTP);	
+			
+			$this->response(array('state'=>'success'));
 		}
 		else{
 			$this->response(array('state'=>'fail'));	

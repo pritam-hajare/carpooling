@@ -42,10 +42,6 @@ class Api_tracking extends REST_Controller
 		
 	}
 
-	function notify_to_share_loc_post(){
-
-	}
-
 
 }
 ?>

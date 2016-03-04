@@ -23,8 +23,6 @@ class Apiride extends REST_Controller
 		}
 	}
 
-
-
 	function get_trip_full_det_post(){
 		$data['error'] = "";
         $data['staus'] = "";
@@ -123,9 +121,10 @@ class Apiride extends REST_Controller
 			    $message['time']=$trip_det[0]['time'];
 			    $message['date']=$trip_det[0]['date'];
 			    $message['dr_name']=$param['dr_name'];
+			    $message['tp_id']=$param['trip_id'];
 			    $message['header']='CR';
 
-       			$this->App_notification_model->send_notification($param['user_id'],$message);
+       			$this->App_notification_model->send_notification($user_id,$message);
 				$this->response(array('state'=>'success'));
 			}
 			else{
@@ -224,7 +223,7 @@ class Apiride extends REST_Controller
 		$data['source_ids'] = $postData['source_ids'];
 		$data['destination_ids'] = $postData['destination_ids'];
 		$data['jquerytagboxtext'] = $postData['jquerytagboxtext'];
-		$data['route_lanlat'] = $postData['stopover_point'];
+		$data['route_lanlat'] = $postData['route_lanlat'];
 		$data['return'] = $postData['return'];
 		$data['departure_time'] = $postData['time'];
 		$data['return_time'] = $postData['return_time'];
@@ -232,7 +231,7 @@ class Apiride extends REST_Controller
 		$data['avail_seats'] = $postData['seats'];
 		$data['number'] = $postData['number'];
 		$data['comments'] = $postData['comments'];
-		$data['routes'] = $postData['stopover'];
+		$data['routes'] = $postData['routes'];
 		$data['rpt_from_date'] = $postData['date'];
 		$data['passenger_type'] = $postData['passenger_type'];
 		//$data['tripid'] = $this->trip_id;
@@ -256,21 +255,29 @@ class Apiride extends REST_Controller
 	
 			$source = $postData['src'];
 			$destination = $postData['dest'];
-	
-			$trip_routes = $source . '~' . $postData['jquerytagboxtext'] . '~' . $destination;
+			if(isset($postData['jquerytagboxtext']) && !empty($postData['jquerytagboxtext'])){
+				$trip_routes = $source . '~' . $postData['jquerytagboxtext'] . '~' . $destination;
+			}else{
+				$trip_routes = $source . '~' . $destination;
+			}
 	
 	
 			$save['trip_id'] = $this->trip_id;
 			$save['trip_vehicle_id'] = $postData['vechicle_id'];
 			$save['trip_from_latlan'] = $postData['source_ids'];
 			$save['trip_to_latlan'] = $postData['destination_ids'];
-			$save['trip_routes_lat_lan'] = $postData['source_ids'] . ',' . $postData['stopover_point'] . ',' . $postData['destination_ids'];
-	
+			if(isset($postData['route_lanlat']) && !empty($postData['route_lanlat'])){
+				$save['trip_routes_lat_lan'] = $postData['source_ids'] . ',' . $postData['route_lanlat'] . ',' . $postData['destination_ids'];
+			}else{
+				$save['trip_routes_lat_lan'] = $postData['source_ids'] . ',' . $postData['destination_ids'];
+			}
 			$save['trip_routes'] = $trip_routes;
 			$save['trip_return'] = $postData['return'];
 			$save['source'] = $postData['src'];
 			$save['destination'] = $postData['dest'];
-			$save['route'] = $postData['stopover'];
+			if(isset($postData['routes']) && !empty($postData['routes'])){
+				$save['route'] = $postData['routes'];
+			}
 			$trip_depature_time = $postData['fhh'] . ':' . $postData['fmm'] . ' ' . $postData['fzone'];
 			$save['trip_depature_time'] = date("H:i:s", strtotime($trip_depature_time));
 			$save['trip_frequncy'] = $postData['frequency_ids'];
@@ -288,50 +295,63 @@ class Apiride extends REST_Controller
 			if ($postData['return'] == 'yes') {
 				$return_destination = $postData['src'];
 				$return_source = $postData['txtdestination'];
-	
-				$return_trip_routes = $postData['jquerytagboxtext'];
-				$return_trip_routes = explode('~', $return_trip_routes);
-				$return_temp = array();
-				for ($i = sizeof($return_trip_routes) - 1; $i >= 0; $i--) {
-	
-					$return_temp[] = $return_trip_routes[$i];
+				if(isset($postData['jquerytagboxtext']) && !empty($postData['jquerytagboxtext'])){
+					$return_trip_routes = $postData['jquerytagboxtext'];
+					$return_trip_routes = explode('~', $return_trip_routes);
+					$return_temp = array();
+					for ($i = sizeof($return_trip_routes) - 1; $i >= 0; $i--) {
+		
+						$return_temp[] = $return_trip_routes[$i];
+					}
+					$return_trip_routes = $return_temp;
+					$return_trip_routes = implode('~', $return_trip_routes);
+					$return_trip_routes = $return_source . '~' . $return_trip_routes . '~' . $return_destination;
+				}else{
+					$return_trip_routes = $return_source . '~' . $return_destination;
 				}
-				$return_trip_routes = $return_temp;
-				$return_trip_routes = implode('~', $return_trip_routes);
-				$return_trip_routes = $return_source . '~' . $return_trip_routes . '~' . $return_destination;
-	
-	
-				$return_trip_lat_lng = $postData['stopover_point'];
-				$return_trip_lat_lng = explode('~', $return_trip_lat_lng);
-				$return_temp = array();
-				for ($i = sizeof($return_trip_lat_lng) - 1; $i >= 0; $i--) {
-	
-					$return_temp[] = $return_trip_lat_lng[$i];
+				if(isset($postData['route_lanlat']) && !empty($postData['route_lanlat'])){
+					$return_trip_lat_lng = $postData['route_lanlat'];
+					$return_trip_lat_lng = explode('~', $return_trip_lat_lng);
+					$return_temp = array();
+					for ($i = sizeof($return_trip_lat_lng) - 1; $i >= 0; $i--) {
+		
+						$return_temp[] = $return_trip_lat_lng[$i];
+					}
+					$return_trip_lat_lng = $return_temp;
+					$return_trip_lat_lng = implode('~', $return_trip_lat_lng);
+				}else{
+					$return_trip_lat_lng = '';
 				}
-				$return_trip_lat_lng = $return_temp;
-				$return_trip_lat_lng = implode('~', $return_trip_lat_lng);
-	
-				$return_route = $postData['stopover'];
-				$return_route = explode(',', $return_route);
-				$return_temp = array();
-				for ($i = sizeof($return_route) - 1; $i >= 0; $i--) {
-	
-					$return_temp[] = $return_route[$i];
+				if(isset($postData['routes'])){
+					$return_route = $postData['routes'];
+					$return_route = explode(',', $return_route);
+					$return_temp = array();
+					for ($i = sizeof($return_route) - 1; $i >= 0; $i--) {
+		
+						$return_temp[] = $return_route[$i];
+					}
+					$return_route = $return_temp;
+					$return_route = implode(',', $return_route);
+				}else{
+					$return_route = '';
 				}
-				$return_route = $return_temp;
-				$return_route = implode(',', $return_route);
-
 				$param['trip_id'] = $this->trip_id;
 				$param['trip_vehicle_id'] = $postData['vechicle_id'];
 				$param['trip_from_latlan'] = $postData['destination_ids'];
 				$param['trip_to_latlan'] = $postData['source_ids'];
-				$param['trip_routes_lat_lan'] = $postData['destination_ids'] . ',' . $return_trip_lat_lng . ',' . $postData['source_ids'];
+				if(!empty($return_trip_lat_lng)){
+					$param['trip_routes_lat_lan'] = $postData['destination_ids'] . ',' . $return_trip_lat_lng . ',' . $postData['source_ids'];
+				}else{
+					$param['trip_routes_lat_lan'] = $postData['destination_ids'] . ',' . $postData['source_ids'];
+				}
 	
 				$param['trip_routes'] = $return_trip_routes;
 				$param['trip_return'] = $postData['return'];
 				$param['source'] = $postData['dest'];
 				$param['destination'] = $postData['src'];
-				$param['route'] = $return_route;
+				if(!empty($return_route)){
+					$param['route'] = $return_route;
+				}
 				$return_trip_depature_time = $postData['thh'] . ':' . $postData['tmm'] . ' ' . $postData['tzone'];
 				$param['trip_depature_time'] = date("H:i", strtotime($return_trip_depature_time));
 				$param['trip_frequncy'] = $postData['frequency_ids'];
@@ -344,9 +364,11 @@ class Apiride extends REST_Controller
 			}
 			//------------------------------------ trip leg concept ------------------------------------------------------------------------
 			if (!empty($trip_id)) {
-	
-				$route_lat = $postData['source_ids'] . ',' . $postData['stopover_point'] . ',' . $postData['destination_ids'];
-	
+				if(isset($postData['route_lanlat']) && !empty($postData['route_lanlat'])){
+					$route_lat = $postData['source_ids'] . ',' . $postData['route_lanlat'] . ',' . $postData['destination_ids'];
+				}else{
+					$route_lat = $postData['source_ids'] . ',' . $postData['destination_ids'];
+				}
 	
 	
 				$route_lat = rtrim($route_lat, '~');
@@ -399,9 +421,11 @@ class Apiride extends REST_Controller
 			}
 	
 			if ($postData['return'] == 'yes' && !empty($return_trip_id)) {
-	
-				$return_route_lat = $postData['destination_ids'] . ',' . $return_trip_lat_lng . ',' . $postData['source_ids'];
-	
+				if(!empty($return_trip_lat_lng)){
+					$return_route_lat = $postData['destination_ids'] . ',' . $return_trip_lat_lng . ',' . $postData['source_ids'];
+				}else{
+					$return_route_lat = $postData['destination_ids'] . ',' . $postData['source_ids'];	
+				}
 				$return_route_lat = rtrim($return_route_lat, '~');
 				$return_route_lat = explode('~,', $return_route_lat);
 	
@@ -461,7 +485,15 @@ class Apiride extends REST_Controller
 		$this->load->model('trip_model');
 		//Get post data
 		$postData = json_decode(file_get_contents("php://input"), true);
-		$param = array('SOURCE' => $postData["src"], 'DESTINATION' => $postData['dest'], 'fromlatlng' => $postData['formlatlng'], 'tolatlng' => $postData['tolatlng'], 'frequency' => date('w', strtotime(str_replace("/", "-",$postData['date']))), 'date' => $postData['date'], 'vechiclecategory' => $postData['VECHICATEGORY_FILTER'], 'vechicletype' => $postData['VECHITYPE_FILTER'], 'filter' => $postData['FILTER'], 'amenities' => $postData['AMENITIES_FILTER'], 'traveltype' => $postData['TRAVELTYPE_FILTER'], 'frquencytype' => $postData['FREQUENCY_FILTER'], 'allowtype' => $postData['TRAVELALLOW_FILTER'], 'return' => $postData['Return_Type']);
+		
+		$param = array('SOURCE' => $postData["src"], 'DESTINATION' => $postData['dest'], 'fromlatlng' => $postData['formlatlng'], 'tolatlng' => $postData['tolatlng'], 'vechiclecategory' => $postData['VECHICATEGORY_FILTER'], 'vechicletype' => $postData['VECHITYPE_FILTER'], 'filter' => $postData['FILTER'], 'amenities' => $postData['AMENITIES_FILTER'], 'traveltype' => $postData['TRAVELTYPE_FILTER'], 'frquencytype' => $postData['FREQUENCY_FILTER'], 'allowtype' => $postData['TRAVELALLOW_FILTER'], 'return' => $postData['Return_Type']);
+		if(isset($postData['date']) && $postData['date'] == 'NA'){
+			$param['frequency'] =  'NA';
+			$param['date'] =  date("d/m/Y");
+		}else{
+			$param['frequency'] = date('w', strtotime(str_replace("/", "-",$postData['date'])));
+			$param['date'] =  $postData['date'];
+		}
 		
 		$offset = $postData['offset'];
 		
@@ -520,7 +552,54 @@ class Apiride extends REST_Controller
 			return $miles;
 		}
 	}
-	
 
+	function post_trip_by_pass_post(){
+		$postData = json_decode(file_get_contents("php://input"), true);
+
+		$param['user_id'] = $postData['u_id'];
+		$param['source'] = $postData['src'];
+		$param['destination'] = $postData['dest'];
+		$param['fromlatlan'] = $postData['src_pt'];
+		$param['tolatlan'] = $postData['dest_pt'];
+		if($postData['dt']!="NA"){
+			$param['date'] = $postData['dt'];		
+		}
+		
+		if($this->trip_model->check_post_trip($param)){
+			$this->response(array('state'=>'avail'));
+		}
+		else{
+			if($this->trip_model->post_trip_save($param))
+			{
+				$this->response(array('state'=>'success'));
+			}
+			else{
+				$this->response(array('state'=>'fail'));
+			}
+		}
+
+	}
+
+	function get_single_trip_det_post(){
+		$postData = json_decode(file_get_contents("php://input"), true);
+		$data = array();
+		$param['trip_id'] = $postData['tp_id'];
+
+		if(isset($param['trip_id']))
+		{
+			$data = $this->trip_model->get_user_single_trip($param);	
+			if(sizeof($data)>0){
+				$data['state'] = 'A';
+				$this->response($data);
+			}
+			else{
+				$this->response(array("state"=>"NA"));
+			}
+		}
+		else{
+			$this->response(array("state"=>"err"));
+		}
+	}
+	
 }
 ?>

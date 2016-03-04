@@ -7,6 +7,7 @@
 			parent::__construct();
 	        $this->load->model('App_booking_model');
 	        $this->load->model('App_notification_model');
+	     	$this->load->model('App_user_model');
 	    }
 
 		function book_ride_post() {
@@ -28,13 +29,7 @@
 					if($status==false){
 						if($this->App_booking_model->request_to_book($param['trip_id'],$param['pass_user_id'])){
 							
-							$message['pass_name']=$param['pass_name'];
-							$message['header']='SR';
-							$message['pass_u_id']=$param['pass_user_id'];
-							$message['tp_id']=$param['trip_id'];
-							$message['seats']=$seats;
-
-							$this->App_notification_model->send_notification($param['dr_user_id'],$message);
+							$this->send_ride_request_noti($param,$seats);
 							$this->response(array('state'=>'success'));
 						}
 						else{
@@ -53,6 +48,23 @@
 			else{
 				 $this->response(array('state'=>'err'));
 			}	
+		}
+
+		function send_ride_request_noti($param,$seats){
+			$message['pass_name']=$param['pass_name'];
+			$message['header']='SR';
+			$message['pass_u_id']=$param['pass_user_id'];
+			$message['tp_id']=$param['trip_id'];
+			$message['seats']=$seats;
+			$img_name = $this->App_user_model->get_profile_img_name($param['pass_user_id']);	
+			if($img_name!=false){
+				$message['img_name'] = $img_name; 
+			}
+			else{
+				$message['img_name'] = "";	
+			}
+
+			return $this->App_notification_model->send_notification($param['dr_user_id'],$message);
 		}
 
 		function get_pass_book_list_post($trip_id){

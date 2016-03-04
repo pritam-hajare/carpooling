@@ -11,7 +11,7 @@ class Api_notification extends REST_Controller
 	function notify_single_pass_share_cur_loc_post() {
 		
 		$postData = json_decode(file_get_contents("php://input"), true);
-		
+
 		$message = array('dr_name' => $postData['dr_name'],
 		                 'header' => 'SL',
 		                 'dr_user_id' => $postData['dr_u_id'],
@@ -43,5 +43,11 @@ class Api_notification extends REST_Controller
 			$this->response(array('state'=>'fail'));		
 		}
 	}	
+
+	function notify_set_professional_email_post(){
+		
+		$message = array('header' => 'SET_PFS_EML');	
+		$this->response($this->App_notification_model->send_notification(484, $message));
+	}
 }
 ?>

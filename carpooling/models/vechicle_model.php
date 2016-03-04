@@ -50,6 +50,8 @@ class Vechicle_model extends CI_Model
 	function check($v_id)
 	{
 		$this->db->where('trip_vehicle_id',$v_id);
+		$this->db->where('trip_status',1);
+		$this->db->where('trip_casual_date < now()');
 		$query = $this->db->get('tbl_trips');
 		//echo $this->db->last_query();
 		if($query->num_rows > 0)
@@ -77,6 +79,16 @@ class Vechicle_model extends CI_Model
 			$this->db->update('tbl_vehicle', $pmData);
 			return $pmData['vechicle_id'];
 		}
+	}
+
+	function update_veh_name($id,$imgName){
+		//By Shashi
+		//I have updfates the vechicle name after adding it as while insertin it in database we dont have the vehical id, so as
+		//vehicle image name contains vehicle id, so after insertion i have retrieved the vechicle id and 
+		//then created the name of vehicle image and then updated it in table.
+		$data = array("veh_img" => $imgName);
+		$this->db->where('vechicle_id', $id);
+		$this->db->update('tbl_vehicle', $data);
 	}
 	
 	function getstate_list() 
@@ -132,24 +144,33 @@ class Vechicle_model extends CI_Model
 	
 	function get_type_list($cid)
 	{
-		    $this->db->select('vechicle_type_id,vechicle_type_name');
-			$this->db->where('category_id', $cid);
-                        $this->db->where('tbl_vechicle_types.isactive','1');
-			$data = $this->db->get('tbl_vechicle_types');
-			//return $data->result();
-			$type = array();
-	 if($data->result())
-	 {
-		  foreach ($data->result() as $location) 
-		  {
-			  $type[$location->vechicle_type_id ] = $location->vechicle_type_name ;
+	    $this->db->select('vechicle_type_id,vechicle_type_name');
+		$this->db->where('category_id', $cid);
+                    $this->db->where('tbl_vechicle_types.isactive','1');
+		$data = $this->db->get('tbl_vechicle_types');
+		//return $data->result();
+		$type = array();
+		 if($data->result())
+		 {
+			  foreach ($data->result() as $location) 
+			  {
+				  $type[$location->vechicle_type_id ] = $location->vechicle_type_name ;
+			  }
+		  return $type;
 		  }
-	  return $type;
-	  }
-	  else
-	  {
-		  return FALSE;
-	  }
+		  else
+		  {
+			  return FALSE;
+		  }
+	}
+
+	function get_type_list_for_app($cid)
+	{
+	    $this->db->select('vechicle_type_id,vechicle_type_name');
+		$this->db->where('category_id',$cid);
+        $this->db->where('tbl_vechicle_types.isactive',1);
+		$data = $this->db->get('tbl_vechicle_types');
+		return $data->result();
 	}
 	
 }	

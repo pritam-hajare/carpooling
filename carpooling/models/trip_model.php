@@ -38,6 +38,7 @@ Class Trip_model extends CI_Model
 		$this->db->join('tbl_users','tbl_users.user_id = tbl_trips.trip_user_id');
 		$this->db->join('tbl_vechicle_types','tbl_vechicle_types.vechicle_type_id = tbl_vehicle.vechicle_type_id ');
 		$this->db->where('tbl_trips.trip_user_id',$uid);
+		$this->db->order_by('tbl_trips.trip_casual_date','ASC');
 		//$this->db->where('tbl_trips.trip_frequncy != ""');
 		//$this->db->where('tbl_trips.trip_casual_date > "'.$cdate.'"'); 
 		$query_val = "(tbl_trips.trip_frequncy != '' OR tbl_trips.trip_casual_date >='".$cdate."')";
@@ -147,8 +148,6 @@ Class Trip_model extends CI_Model
 	  $temp = array();
 		if($result)
 		{
-		
-	
 			foreach( $result as $key => $row )
 			{
 				$temp['leg_'.$row['trip_id']] = $this->db->get_where('tbl_t_trip_legs', array('trip_id'=>$row['trip_id']))->result_array();
@@ -513,11 +512,6 @@ Class Trip_model extends CI_Model
 		die;*/
 		return $data;
 
-	  
-	  
-	  
-	  
-	  
 	    /*$this->db->select('trip_casual_date');
 		//$this->db->where('trip_id',$trip_id);
 		$result = $this->db->get('tbl_trips');
@@ -552,4 +546,69 @@ Class Trip_model extends CI_Model
         }
 
 	}
+
+	function post_trip_save($param){
+		$param['created_dt_time'] = date('Y-m-d H:i:s',now());
+		$this->db->insert('tbl_post_trip', $param);
+		return $this->db->insert_id();
+	}
+
+	function check_post_trip($param){
+		$this->db->select('post_trip_id');
+		$this->db->from('tbl_post_trip');
+		$this->db->where('source',$param['source']);
+		$this->db->where('destination',$param['destination']);
+		$this->db->where('date',$param['date']);
+		$this->db->where('user_id',$param['user_id']);
+
+		$result = $this->db->get();
+		$result = $result->result_array();
+
+		if(sizeof($result)>0){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+
+	function get_user_single_trip($param)
+    {   
+    	$this->db->select('tbl_users.user_id as u_id,
+    					   tbl_users.user_first_name as fname,
+    					   tbl_users.user_last_name as lname,
+    					   tbl_users.user_mobile as mobno,
+    		               tbl_users.mob_vf as m_vf,
+    		               tbl_users.user_email as email,
+    		               tbl_users.email_vf as e_vf,
+    		               tbl_users.rating as rting,
+    					   tbl_users.user_gender as gen,
+    					   tbl_users.allowed_smoke as smk,
+    					   tbl_users.allowed_pet as pet,
+    					   tbl_users.allowed_music as msc,
+    					   tbl_vehicle.vechicle_id as veh_id,
+    					   tbl_vehicle.vechicle_class as veh_class,
+    					   tbl_vehicle.veh_img as img_name,
+    					   tbl_vechicle_types.vechicle_type_name as veh_type_name,
+    					   tbl_category.category_name as veh_cat,
+    					   tbl_trips.source as src,
+    					   tbl_trips.destination as dest,
+    					   tbl_trips.trip_casual_date as date,
+    					   tbl_trips.trip_depature_time as time,
+    					   tbl_trips.trip_avilable_seat as seats,
+    					   tbl_trips.trip_rate_details as rate,
+    					   tbl_trips.trip_comments as comments');
+		
+        $this->db->select('DATE_FORMAT(tbl_trips.trip_casual_date, "%d/%m/%Y") AS date', FALSE);
+        $this->db->from('tbl_trips');
+        $this->db->join('tbl_users','tbl_users.user_id = tbl_trips.trip_user_id');
+ 		$this->db->join('tbl_vehicle','tbl_vehicle.vechicle_id = tbl_trips.trip_vehicle_id');
+ 		$this->db->join('tbl_vechicle_types','tbl_vechicle_types.vechicle_type_id = tbl_vehicle.vechicle_type_id');
+ 		$this->db->join('tbl_category','tbl_vechicle_types.category_id = tbl_category.category_id');       
+        $this->db->where('tbl_trips.trip_id',$param['trip_id']);
+        
+        $result = $this->db->get();
+        return $result->result_array();       
+    }	
+
 }

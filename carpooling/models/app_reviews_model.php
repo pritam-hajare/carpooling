@@ -20,7 +20,20 @@ class App_reviews_model extends CI_Model
 
     function write_review($param)  
     {   
+        $this->set_avg_rating($param['user_id'],$param['rating']);
         return $this->db->insert('tbl_reviews', $param);
+    }
+
+    function set_avg_rating($id,$newRating){
+        $this->db->select('AVG(rating) as avg_rating');
+        $this->db->from('tbl_reviews');
+        $this->db->where('tbl_reviews.user_id',$id);
+        $result = $this->db->get();
+        $avgRating = $result->result_array();
+        $roundAvgRating = round((float) $avgRating[0]['avg_rating']);    
+        $data=array('rating' => $roundAvgRating);
+        $this->db->where('user_id',$id);
+        $this->db->update('tbl_users', $data);
     }
 
     function verify_mob_for_rev($mobno){

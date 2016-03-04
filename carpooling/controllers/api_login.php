@@ -10,7 +10,6 @@ class Api_login extends REST_Controller
 		$this->load->model('App_sms_model');
 	}
 
-
 	function facebooklogin_post() {
 		$result=array();
 		$output=array();
@@ -33,13 +32,18 @@ class Api_login extends REST_Controller
 				$output['fname']=$result['user_first_name'];
 				$output['mobile']=$result['user_mobile'];
 				$output['mob_vf']=$result['mob_vf'];
-
+				$output['img_prof']=$result['user_profile_img'];
+				//Professional emial id
+				$output['pfs_email']=$result['user_professional_email'];
+				$output['pfs_email_vf']=$result['profs_email_vf'];
+				
 				//Send otp to mobile no if mobile noavailable and not verified
 				if(!empty($output['mobile']) && $output['regFbState']!='disable'){
 					if($output['mob_vf']==0){
 						$OTP=rand(100000, 999999);
 						$this->App_otp_model->save_otp($output['u_id'],$OTP);
-						$this->App_sms_model->send_otp($output['mobile'],$OTP);	
+						$this->App_sms_model->send_otp($output['mobile'],$OTP);
+						//$this->App_otp_model->send_otp_by_mail($output['u_id'], $OTP));		
 					}
 				}
 
@@ -61,8 +65,9 @@ class Api_login extends REST_Controller
 
 		if(!empty($param['user_id'])){
 			$data=array('login_state_app'=>0);
-			$this->db->update('tbl_users', $data);
-			if($this->db->where('user_id',$param['user_id'])){
+			$this->db->where('user_id',$param['user_id']);
+			
+			if($this->db->update('tbl_users', $data)){
 				$this->response(array('state'=>'success'));
 			}
 			else{
@@ -87,7 +92,11 @@ class Api_login extends REST_Controller
 				}else{
 					$result['regFbState']='already_available';	
 
-					$data=array('login_state_app'=>1);
+					$data=array('login_state_app'=>1,
+						        'gcm_id'=>$profile['gcm_id'],
+						        'user_email'=>$profile['email'],
+						        'user_first_name'=>$profile['first_name'],
+						        'user_gender'=>$profile['gender']);
         			$this->db->where('user_id',$result['user_id']);
         			$this->db->update('tbl_users', $data); 	
 				}

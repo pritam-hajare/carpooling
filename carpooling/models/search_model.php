@@ -30,6 +30,7 @@ Class Search_model extends CI_Model
 			$this->db->select('tbl_radius.radius');
 			$querycon = '( '.$distance.' BETWEEN `distance_from` AND `distance_to`)';
 			$this->db->where($querycon);
+			
 			$query = $this->db->get('tbl_radius');
 			$result = $query->row_array();						
 			if (sizeof($result) > 0)
@@ -48,8 +49,8 @@ Class Search_model extends CI_Model
 		}
 		
 		if(empty($map)){
-			$limit =3;
-			$this->db->limit($limit,$offset);
+			//$limit =3;
+			//$this->db->limit($limit,$offset);
 		}
 		//filter 1:
 		$frequency_type = $param['frquencytype'];
@@ -66,20 +67,33 @@ Class Search_model extends CI_Model
 		if($frequency !="" && $frequency !="NaN")
 			{
 				
-			$str = explode(',',$frequency);
 			$querycon = "(";
-			foreach ($str as $k => $tmpdept)
-			 { 
-				if($querycon != "(")
-				{
-				$querycon .=" OR ";
-				 }
-				 $querycon .="tbl_trips.trip_frequncy like '%~".$tmpdept."~%'";
-	 
+			if($frequency !="NA"){
+				$str = explode(',',$frequency);
+				foreach ($str as $k => $tmpdept)
+				 { 
+					if($querycon != "(")
+					{
+					$querycon .=" OR ";
+					 }
+					 $querycon .="tbl_trips.trip_frequncy like '%~".$tmpdept."~%'";
+		 
+				}
 			}
 			
-			$querycon .=" OR ";		
-			$querycon .="tbl_trips.trip_casual_date = '".date('Y/m/d',strtotime(str_replace("/","-",$param['date'])))."'";
+			if($querycon != "(")
+			{
+				$querycon .=" OR ";
+			}
+			
+			if($frequency !="NA"){			
+				$querycon .="tbl_trips.trip_casual_date = '".date('Y/m/d',strtotime(str_replace("/","-",$param['date'])))."'";
+			}else{
+				$startDate =  date('Y/m/d');
+				$endDate = date('Y/m/d', strtotime('+3 month'));
+				$querycon .="tbl_trips.trip_casual_date BETWEEN '".$startDate."' AND '".$endDate."'";
+			}
+			
 			$querycon .= ")";
 			$this->db->where($querycon);
 			}
@@ -99,16 +113,18 @@ Class Search_model extends CI_Model
 			}	
 		
 			$this->db->select('tbl_t_trip_legs.*,tbl_trips.*,tbl_users.*,tbl_vehicle.*,tbl_vechicle_types.*,tbl_category.*,ACOS( SIN( RADIANS( tbl_t_trip_legs.source_latitude ) ) * SIN( RADIANS( '.$source_lat.' ) ) + COS( RADIANS( tbl_t_trip_legs.source_latitude ) )* COS( RADIANS( '.$source_lat.' )) * COS( RADIANS( tbl_t_trip_legs.source_longitude) - RADIANS( '.$source_lng.' )) ) * 6380 AS `source_distance`,ACOS( SIN( RADIANS( tbl_t_trip_legs.destination_latitude ) ) * SIN( RADIANS( '.$destination_lat.' ) ) + COS( RADIANS( tbl_t_trip_legs.destination_latitude ) )* COS( RADIANS( '.$destination_lat.' )) * COS( RADIANS( tbl_t_trip_legs.destination_longitude) - RADIANS( '.$destination_lng.' )) ) * 6380 AS `distination_distance`');
-			
+			//New cluase added
+			//$this->db->where('trip_status',1);
 			$this->db->join('tbl_trips', 'tbl_trips.trip_id  = tbl_t_trip_legs.trip_id');	
 			$this->db->join('tbl_users', 'tbl_users.user_id = tbl_trips.trip_user_id');
 			$this->db->join('tbl_vehicle', 'tbl_vehicle.vechicle_id = tbl_trips.trip_vehicle_id');
 			$this->db->join('tbl_vechicle_types', 'tbl_vechicle_types.vechicle_type_id = tbl_vehicle.vechicle_type_id');
 			$this->db->join('tbl_category', 'tbl_category.category_id = tbl_vechicle_types.category_id');
+			$this->db->where('tbl_trips.trip_status','1');
+			//$this->db->where('tbl_users.user_gender','F');
 			$this->db->having('source_distance <'.$radius);
 			$this->db->having('distination_distance <'.$radius);
-			$this->db->order_by('source_distance','DESC');
-                        $this->db->where('tbl_trips.trip_status','1');
+			$this->db->order_by('trip_casual_date ASC, trip_depature_time ASC');
 			
 			$result = $this->db->get('tbl_t_trip_legs');
                         
@@ -202,20 +218,33 @@ Class Search_model extends CI_Model
 		if($frequency !="" && $frequency !="NaN")
 			{
 				
-			$str = explode(',',$frequency);
 			$querycon = "(";
-			foreach ($str as $k => $tmpdept)
-			 { 
-				if($querycon != "(")
-				{
-				$querycon .=" OR ";
-				 }
-				 $querycon .="tbl_trips.trip_frequncy like '%~".$tmpdept."~%'";
-	 
+			if($frequency !="NA"){
+				$str = explode(',',$frequency);
+				foreach ($str as $k => $tmpdept)
+				 { 
+					if($querycon != "(")
+					{
+					$querycon .=" OR ";
+					 }
+					 $querycon .="tbl_trips.trip_frequncy like '%~".$tmpdept."~%'";
+		 
+				}
 			}
 			
-			$querycon .=" OR ";		
-			$querycon .="tbl_trips.trip_casual_date = '".date('Y/m/d',strtotime(str_replace("/","-",$param['date'])))."'";
+			if($querycon != "(")
+			{
+				$querycon .=" OR ";
+			}
+			
+			if($frequency !="NA"){			
+				$querycon .="tbl_trips.trip_casual_date = '".date('Y/m/d',strtotime(str_replace("/","-",$param['date'])))."'";
+			}else{
+				$startDate =  date('Y/m/d');
+				$endDate = date('Y/m/d', strtotime('+3 month'));
+				$querycon .="tbl_trips.trip_casual_date BETWEEN '".$startDate."' AND '".$endDate."'";
+			}
+			
 			$querycon .= ")";
 			$this->db->where($querycon);
 			}
@@ -240,10 +269,10 @@ Class Search_model extends CI_Model
 			$this->db->join('tbl_vehicle', 'tbl_vehicle.vechicle_id = tbl_trips.trip_vehicle_id');
 			$this->db->join('tbl_vechicle_types', 'tbl_vechicle_types.vechicle_type_id = tbl_vehicle.vechicle_type_id');
 			$this->db->join('tbl_category', 'tbl_category.category_id = tbl_vechicle_types.category_id');	
+			$this->db->where('tbl_trips.trip_status','1');
 			$this->db->having('source_distance <'.$radius);
 			$this->db->having('distination_distance <'.$radius);
 			$this->db->order_by('source_distance','DESC');
-                        $this->db->where('tbl_trips.trip_status','1');
 			
 			$result = $this->db->get('tbl_t_trip_legs');
                         

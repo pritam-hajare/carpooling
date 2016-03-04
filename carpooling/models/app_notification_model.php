@@ -18,7 +18,7 @@ class App_notification_model extends CI_Model
     {   
         $this->db->select('gcm_id');
         $this->db->from('tbl_users');
-        $this->db->where_in('user_id',implode($user_ids));
+        $this->db->where_in('user_id',$user_ids);
         $this->db->where('login_state_app',1);
               
         $result = $this->db->get();
@@ -30,16 +30,20 @@ class App_notification_model extends CI_Model
     function sendNotification($gcm_ids, $message) {
 
         $this->load->library('gcm');
-
+        
         for ($i=0; $i < count($gcm_ids) ; $i++) { 
             $this->gcm->addRecepient($gcm_ids[$i]['gcm_id']);
         }
 
         $this->gcm->setData($message);
+        
         if ($this->gcm->send())
+        {   
             return true;
-        else
+        }
+        else{
             return false;
+        }    
     }
 }    
 ?>

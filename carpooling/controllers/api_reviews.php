@@ -29,6 +29,10 @@
 			}	
 		}
 
+		function setavg_post(){
+			$this->response($this->App_reviews_model->set_avg_rating(484,4));
+		}
+
 		function write_review_post() {
 		
 			$postData = json_decode(file_get_contents("php://input"), true);

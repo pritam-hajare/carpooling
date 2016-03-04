@@ -13,7 +13,7 @@
 | path to your installation.
 |
 */
-$config['base_url']			= 'http://localhost/carpooling/';
+$config['base_url']			= 'http://97.74.234.178/carpooling/';
 
 
 

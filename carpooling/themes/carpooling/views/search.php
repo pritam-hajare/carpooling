@@ -79,7 +79,7 @@ var country = '<?php print ($this->config->item('country_code') != '')?$this->co
      
         <div class="rowrec srh-lft-main">
 
-          <!--<div class="row srh-div">
+          <div class="row srh-div">
             <h3>Sort by</h3>
             <ul class="row tb-mnu">
               <li><a href="#">Proximity</a></li>
@@ -87,7 +87,7 @@ var country = '<?php print ($this->config->item('country_code') != '')?$this->co
               <li><a href="#">Price</a></li>
             </ul>
           </div>
-          -->
+          
           <div class="rowrec srh-div">
             <h3><?php echo lang('trip_frequency');?></h3>
             <div class="row">
@@ -97,7 +97,7 @@ var country = '<?php print ($this->config->item('country_code') != '')?$this->co
             </div>
           </div>
          
-          <!--<div class="row srh-div">
+          <div class="row srh-div">
             <h3>Car comfort level</h3>
             <div class="row">
               <label class="row"> <input type="radio"> Luxury  </label>
@@ -105,7 +105,7 @@ var country = '<?php print ($this->config->item('country_code') != '')?$this->co
               <label class="row"> <input type="radio"> Normal or Above  </label>
               <label class="row"> <input type="radio"> All Types  </label>
             </div>
-          </div>-->
+          </div>
           
           <div class="rowrec srh-div">
             <h3> <?php echo lang('return_journy');?> </h3>
